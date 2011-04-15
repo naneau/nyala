@@ -20,7 +20,7 @@ module.exports = testCase
         promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
         promise.filter = filter
         
-        promise.on 'success', (result) -> 
+        promise.kept (result) -> 
             test.equal (filter 'foo', 'bar', 'baz'), result
             do test.done
         
@@ -36,7 +36,7 @@ module.exports = testCase
         promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
         promise.filter = filter
 
-        promise.on 'success', (baz, bar, foo) -> 
+        promise.kept (baz, bar, foo) -> 
             test.equal baz, 'baz'
             test.equal bar, 'bar'
             test.equal foo, 'foo'

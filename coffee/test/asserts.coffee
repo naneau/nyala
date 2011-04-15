@@ -16,10 +16,10 @@ module.exports = testCase
         promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
         promise.assert = (foo, bar, baz) -> foo is 'foo'
         
-        promise.on 'success', (foo, bar, baz) -> 
+        promise.kept (foo, bar, baz) -> 
             test.equal foo, 'foo'
             do test.done
-        promise.on 'fail', (result) -> test.fail 'We should not fail'
+        promise.broken (result) -> test.fail 'We should not fail'
         
         promise.execute 'foo', 'bar', 'baz'
         
@@ -29,8 +29,8 @@ module.exports = testCase
         promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
         promise.assert = (foo, bar, baz) -> foo is 'quux'
     
-        promise.on 'success', (result) -> test.fail 'We should not succeed if the assertion fails'
-        promise.on 'fail', (result) -> 
+        promise.kept (result) -> test.fail 'We should not succeed if the assertion fails'
+        promise.broken (result) -> 
             do test.done
     
         promise.execute 'foo', 'bar', 'baz'

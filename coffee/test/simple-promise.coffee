@@ -37,8 +37,8 @@ module.exports = testCase
             fn = () => do @success
             process.nextTick fn
             
-        promise.on 'fail', () -> test.fail 'Should not fail'
-        promise.on 'success', () -> do test.done    
+        promise.broken () -> test.fail 'Should not fail'
+        promise.kept () -> do test.done    
 
         do promise.execute
     
@@ -50,8 +50,8 @@ module.exports = testCase
             fn = () => do @fail
             process.nextTick fn
             
-        promise.on 'success', () -> test.fail 'Should not succeed'
-        promise.on 'fail', () -> do test.done    
+        promise.kept () -> test.fail 'Should not succeed'
+        promise.broken () -> do test.done    
 
         do promise.execute
     
@@ -63,8 +63,8 @@ module.exports = testCase
             fn = () => @success 'foo', 'bar', 'baz'
             process.nextTick fn
             
-        promise.on 'fail', () -> test.fail 'Should not fail'
-        promise.on 'success', (foo, bar, baz) -> 
+        promise.broken () -> test.fail 'Should not fail'
+        promise.kept (foo, bar, baz) -> 
             test.equal foo, 'foo'
             test.equal bar, 'bar'
             test.equal baz, 'baz'
@@ -81,8 +81,8 @@ module.exports = testCase
             fn = () => @fail 'foo', 'bar', 'baz'
             process.nextTick fn
             
-        promise.on 'success', () -> test.fail 'Should not succeed'
-        promise.on 'fail', (foo, bar, baz) -> 
+        promise.kept () -> test.fail 'Should not succeed'
+        promise.broken (foo, bar, baz) -> 
             test.equal foo, 'foo'
             test.equal bar, 'bar'
             test.equal baz, 'baz'
@@ -101,8 +101,8 @@ module.exports = testCase
             
             success foo, bar, baz
             
-        promise.on 'fail', () -> test.fail 'Should not fail'
-        promise.on 'success', (foo, bar, baz) ->
+        promise.broken () -> test.fail 'Should not fail'
+        promise.kept (foo, bar, baz) ->
         
             test.equal foo, 'foo'
             test.equal bar, 'bar'
@@ -122,8 +122,8 @@ module.exports = testCase
 
             fail foo, bar, baz
             
-        promise.on 'success', () -> test.fail 'Should not succeed'
-        promise.on 'fail', (foo, bar, baz) ->
+        promise.kept () -> test.fail 'Should not succeed'
+        promise.broken (foo, bar, baz) ->
 
             test.equal foo, 'foo'
             test.equal bar, 'bar'

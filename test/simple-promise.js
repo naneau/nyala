@@ -36,10 +36,10 @@
         }, this);
         return process.nextTick(fn);
       });
-      promise.on('fail', function() {
+      promise.broken(function() {
         return test.fail('Should not fail');
       });
-      promise.on('success', function() {
+      promise.kept(function() {
         return test.done();
       });
       return promise.execute();
@@ -54,10 +54,10 @@
         }, this);
         return process.nextTick(fn);
       });
-      promise.on('success', function() {
+      promise.kept(function() {
         return test.fail('Should not succeed');
       });
-      promise.on('fail', function() {
+      promise.broken(function() {
         return test.done();
       });
       return promise.execute();
@@ -72,10 +72,10 @@
         }, this);
         return process.nextTick(fn);
       });
-      promise.on('fail', function() {
+      promise.broken(function() {
         return test.fail('Should not fail');
       });
-      promise.on('success', function(foo, bar, baz) {
+      promise.kept(function(foo, bar, baz) {
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');
@@ -93,10 +93,10 @@
         }, this);
         return process.nextTick(fn);
       });
-      promise.on('success', function() {
+      promise.kept(function() {
         return test.fail('Should not succeed');
       });
-      promise.on('fail', function(foo, bar, baz) {
+      promise.broken(function(foo, bar, baz) {
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');
@@ -113,10 +113,10 @@
         test.equal(baz, 'baz');
         return success(foo, bar, baz);
       }, this));
-      promise.on('fail', function() {
+      promise.broken(function() {
         return test.fail('Should not fail');
       });
-      promise.on('success', function(foo, bar, baz) {
+      promise.kept(function(foo, bar, baz) {
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');
@@ -133,10 +133,10 @@
         test.equal(baz, 'baz');
         return fail(foo, bar, baz);
       }, this));
-      promise.on('success', function() {
+      promise.kept(function() {
         return test.fail('Should not succeed');
       });
-      promise.on('fail', function(foo, bar, baz) {
+      promise.broken(function(foo, bar, baz) {
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');

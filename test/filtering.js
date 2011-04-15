@@ -16,7 +16,7 @@
         return this.success(foo, bar, baz);
       });
       promise.filter = filter;
-      promise.on('success', function(result) {
+      promise.kept(function(result) {
         test.equal(filter('foo', 'bar', 'baz'), result);
         return test.done();
       });
@@ -32,7 +32,7 @@
         return this.success(foo, bar, baz);
       });
       promise.filter = filter;
-      promise.on('success', function(baz, bar, foo) {
+      promise.kept(function(baz, bar, foo) {
         test.equal(baz, 'baz');
         test.equal(bar, 'bar');
         test.equal(foo, 'foo');

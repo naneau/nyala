@@ -49,13 +49,13 @@ class PromiseChain extends Promise
             
             # We listen to the fail, which will break the chain
             failed = false
-            promise.on 'fail', (args...) =>
+            promise.broken (args...) =>
                 # We keep a boolean here in case somebody calls both fail and success
                 failed = true
                 @fail args...
             
             # Success on the other hand, will continue the chain with the next promise
-            promise.on 'success', (args...) -> 
+            promise.kept (args...) -> 
                 next (index + 1), args... if not failed
                 
             # Assert each promise with @assertEach if it is set

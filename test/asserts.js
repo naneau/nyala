@@ -15,11 +15,11 @@
       promise.assert = function(foo, bar, baz) {
         return foo === 'foo';
       };
-      promise.on('success', function(foo, bar, baz) {
+      promise.kept(function(foo, bar, baz) {
         test.equal(foo, 'foo');
         return test.done();
       });
-      promise.on('fail', function(result) {
+      promise.broken(function(result) {
         return test.fail('We should not fail');
       });
       return promise.execute('foo', 'bar', 'baz');
@@ -33,10 +33,10 @@
       promise.assert = function(foo, bar, baz) {
         return foo === 'quux';
       };
-      promise.on('success', function(result) {
+      promise.kept(function(result) {
         return test.fail('We should not succeed if the assertion fails');
       });
-      promise.on('fail', function(result) {
+      promise.broken(function(result) {
         return test.done();
       });
       return promise.execute('foo', 'bar', 'baz');
