@@ -97,29 +97,30 @@ module.exports = testCase
 
         do chain.execute
     
-    # 'A PromiseChain accepts scoped functions': (test) ->
-    #     test.expect 5
-    # 
-    #     chain = new PromiseChain
-    #     
-    #     # Some kind of scope
-    #     scope = foo: 'foo'
-    #     
-    #     chain.add scope, (success, fail) ->
-    #         test.equal @foo, 'foo'
-    #         test.ok true
-    #         success 'foo'
-    #         
-    #     chain.add (foo, success, fail) ->
-    #         test.equal foo, 'foo'
-    #         success 'bar'
-    #     chain.add (bar, success, fail) ->
-    #         test.equal bar, 'bar'
-    #         do success
-    # 
-    #     chain.broken () -> test.fail 'We should not fail'        
-    #     chain.kept (foo) ->
-    #         test.ok true
-    #         do test.done
-    # 
-    #     do chain.execute
+    'A PromiseChain accepts scoped functions': (test) ->
+        test.expect 5
+    
+        chain = new PromiseChain
+        
+        # Some kind of scope
+        @foo = 'foo'
+        
+        chain.add (success, fail) =>
+            test.equal @foo, 'foo'
+            test.ok true
+            success 'foo'
+            
+        chain.add (foo, success, fail) ->
+            test.equal foo, 'foo'
+            success 'bar'
+            
+        chain.add (bar, success, fail) ->
+            test.equal bar, 'bar'
+            do success
+    
+        chain.broken () -> test.fail 'We should not fail'        
+        chain.kept (foo) ->
+            test.ok true
+            do test.done
+    
+        do chain.execute

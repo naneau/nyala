@@ -11,7 +11,8 @@ class PromiseChain extends Promise
     constructor: (args...) ->
         
         # We're just a regular Promise too, @runStack gets called when executing
-        super (args...) => @runStack args...
+        p = this
+        super this, (args...) -> p.runStack args...
             
         # Init array of promises
         @promises = []
@@ -35,7 +36,7 @@ class PromiseChain extends Promise
         this
         
     # Run through our stack of promises and execute each one
-    runStack: (args...) ->
+    runStack: (args..., keepCallback, breakCallback) ->
         stack = @promises
         
         # We do need a stack
@@ -51,14 +52,14 @@ class PromiseChain extends Promise
             
             # We listen to the fail, which will break the chain
             failed = false
-            promise.broken (args...) =>
+            promise.broken (brokenArgs...) =>
                 # We keep a boolean here in case somebody calls both fail and success
                 failed = true
-                @break args...
+                @break brokenArgs...
             
             # Success on the other hand, will continue the chain with the next promise
-            promise.kept (args...) -> 
-                next (index + 1), args... if not failed
+            promise.kept (keptArgs...) -> 
+                next (index + 1), keptArgs... if not failed
                 
             # Assert each promise with @assertEach if it is set
             return @break "Assertion failed on step #{index + 1}" if @assertEach? and not @assertEach args... 

@@ -1,5 +1,6 @@
 (function() {
   var Promise, PromiseChain, testCase;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   testCase = (require('nodeunit')).testCase;
   Promise = require('../lib/promise');
   PromiseChain = require('../lib/promiseChain');
@@ -101,6 +102,33 @@
         return test.fail('We should not fail');
       });
       chain.kept(function() {
+        test.ok(true);
+        return test.done();
+      });
+      return chain.execute();
+    },
+    'A PromiseChain accepts scoped functions': function(test) {
+      var chain;
+      test.expect(5);
+      chain = new PromiseChain;
+      this.foo = 'foo';
+      chain.add(__bind(function(success, fail) {
+        test.equal(this.foo, 'foo');
+        test.ok(true);
+        return success('foo');
+      }, this));
+      chain.add(function(foo, success, fail) {
+        test.equal(foo, 'foo');
+        return success('bar');
+      });
+      chain.add(function(bar, success, fail) {
+        test.equal(bar, 'bar');
+        return success();
+      });
+      chain.broken(function() {
+        return test.fail('We should not fail');
+      });
+      chain.kept(function(foo) {
         test.ok(true);
         return test.done();
       });

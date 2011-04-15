@@ -37,14 +37,10 @@ class Promise
         return @break 'Assertion failed' if @assert? and not @assert args... 
 
         # Map success and fail if we're differently scoped...
-        # We do this the funky way to make the PromisChain play nice with scope
-        parent = this
-        keep = @keep
-        breakC = @break
-
-        args.push (args...) -> keep.apply parent, args
-        args.push (args...) -> breakC.apply parent, args
-        
+        # We might want to "if @scope isnt this" here
+        args.push (args...) => @keep args...
+        args.push (args...) => @break args...
+                
         # Call the actual function
         @func.apply @scope, args
         
