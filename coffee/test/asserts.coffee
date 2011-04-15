@@ -13,7 +13,7 @@ module.exports = testCase
     'Promises accept an assert that succeeds': (test) ->
         test.expect 1
         
-        promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
+        promise = new Promise (foo, bar, baz) -> @keep foo, bar, baz
         promise.assert = (foo, bar, baz) -> foo is 'foo'
         
         promise.kept (foo, bar, baz) -> 
@@ -26,7 +26,7 @@ module.exports = testCase
     'Promises accept an assert that fails': (test) ->
         test.expect 0
     
-        promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
+        promise = new Promise (foo, bar, baz) -> @keep foo, bar, baz
         promise.assert = (foo, bar, baz) -> foo is 'quux'
     
         promise.kept (result) -> test.fail 'We should not succeed if the assertion fails'

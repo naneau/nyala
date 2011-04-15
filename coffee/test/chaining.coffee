@@ -17,13 +17,13 @@ module.exports = testCase
         chain = new PromiseChain
         chain.add () -> 
             test.ok true
-            do @success
+            do @keep
         chain.add () -> 
             test.ok true
-            do @success
+            do @keep
         chain.add () -> 
             test.ok true
-            do @success
+            do @keep
         
         chain.broken () -> test.fail 'We should not fail'        
         chain.kept () ->
@@ -38,13 +38,13 @@ module.exports = testCase
         chain = new PromiseChain
         chain.add () -> 
             test.ok true
-            @success 'foo'
+            @keep 'foo'
         chain.add (foo) -> 
             test.equal foo, 'foo'
-            @success 'bar'
+            @keep 'bar'
         chain.add (bar) -> 
             test.equal bar, 'bar'
-            @success 'baz'
+            @keep 'baz'
             
         chain.broken () -> test.fail 'We should not fail'
         chain.kept (baz) ->
@@ -59,10 +59,10 @@ module.exports = testCase
         chain = new PromiseChain
         chain.add () -> 
             test.ok true
-            do @success
+            do @keep
         chain.add () -> 
             test.ok true
-            @fail 'foo'
+            @break 'foo'
         chain.add () -> 
             test.fail 'We should not get to the third step in the chain'
         
@@ -82,13 +82,13 @@ module.exports = testCase
         chain = new PromiseChain
         chain.add new Promise () -> 
             test.ok true
-            do @success
+            do @keep
         chain.add () -> 
             test.ok true
-            do @success
+            do @keep
         chain.add new Promise () -> 
             test.ok true
-            do @success
+            do @keep
 
         chain.broken () -> test.fail 'We should not fail'        
         chain.kept () ->
@@ -96,18 +96,24 @@ module.exports = testCase
             do test.done
 
         do chain.execute
-        
+    
     # 'A PromiseChain accepts scoped functions': (test) ->
-    #     test.expect 4
+    #     test.expect 5
     # 
     #     chain = new PromiseChain
-    #     chain.add (success, fail) =>
+    #     
+    #     # Some kind of scope
+    #     scope = foo: 'foo'
+    #     
+    #     chain.add scope, (success, fail) ->
+    #         test.equal @foo, 'foo'
     #         test.ok true
     #         success 'foo'
-    #     chain.add (foo, success, fail) =>
+    #         
+    #     chain.add (foo, success, fail) ->
     #         test.equal foo, 'foo'
     #         success 'bar'
-    #     chain.add (bar, success, fail) =>
+    #     chain.add (bar, success, fail) ->
     #         test.equal bar, 'bar'
     #         do success
     # 
@@ -117,4 +123,3 @@ module.exports = testCase
     #         do test.done
     # 
     #     do chain.execute
-    # 

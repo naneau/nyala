@@ -8,7 +8,12 @@
 class Promise
 
     # Constructor
-    constructor: (@func) ->
+    constructor: (args...) ->
+        # Last argument passed is the function to execute
+        @func = do args.pop
+        
+        # But we may have a first denoting the scope for the function
+        @scope = if args.length > 0 then do args.pop else this
         
         # Handlers
         @brokenHandlers = []
@@ -29,20 +34,25 @@ class Promise
     # Execute the stack
     execute: (args...) ->
         # Assert
-        return @fail 'Assertion failed' if @assert? and not @assert args... 
+        return @break 'Assertion failed' if @assert? and not @assert args... 
 
-        # Map success and fail
-        success = (args...) => @success args...
-        fail = (args...) => @fail args...
+        # Map success and fail if we're differently scoped...
+        # We do this the funky way to make the PromisChain play nice with scope
+        parent = this
+        keep = @keep
+        breakC = @break
+
+        args.push (args...) -> keep.apply parent, args
+        args.push (args...) -> breakC.apply parent, args
         
         # Call the actual function
-        @func args..., success, fail
+        @func.apply @scope, args
         
     # Record failure
-    fail: (args...) -> handler args... for handler in @brokenHandlers
+    break: (args...) -> handler args... for handler in @brokenHandlers
 
     # Record success
-    success: (args...) ->
+    keep: (args...) ->
         # Filter result, where we also make sure we get an array back, to play well with the args... splat
         # I think it may be better if I add a simple Filter class that mirrors Promise functionality, or at least add
         # a callback here

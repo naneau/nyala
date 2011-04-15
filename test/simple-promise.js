@@ -32,7 +32,7 @@
       promise = new Promise(function() {
         var fn;
         fn = __bind(function() {
-          return this.success();
+          return this.keep();
         }, this);
         return process.nextTick(fn);
       });
@@ -50,7 +50,7 @@
       promise = new Promise(function() {
         var fn;
         fn = __bind(function() {
-          return this.fail();
+          return this["break"]();
         }, this);
         return process.nextTick(fn);
       });
@@ -68,7 +68,7 @@
       promise = new Promise(function() {
         var fn;
         fn = __bind(function() {
-          return this.success('foo', 'bar', 'baz');
+          return this.keep('foo', 'bar', 'baz');
         }, this);
         return process.nextTick(fn);
       });
@@ -89,7 +89,7 @@
       promise = new Promise(function() {
         var fn;
         fn = __bind(function() {
-          return this.fail('foo', 'bar', 'baz');
+          return this["break"]('foo', 'bar', 'baz');
         }, this);
         return process.nextTick(fn);
       });
@@ -105,14 +105,18 @@
       return promise.execute();
     },
     'Promises can execute with a different scope and still succeed': function(test) {
-      var promise;
-      test.expect(6);
-      promise = new Promise(__bind(function(foo, bar, baz, success, fail) {
+      var promise, scope;
+      test.expect(7);
+      scope = {
+        foo: 'foo'
+      };
+      promise = new Promise(scope, function(foo, bar, baz, keepCallback, breakCallback) {
+        test.equal(this.foo, 'foo');
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');
-        return success(foo, bar, baz);
-      }, this));
+        return keepCallback(foo, bar, baz);
+      });
       promise.broken(function() {
         return test.fail('Should not fail');
       });
@@ -127,11 +131,11 @@
     'Promises can execute with a different scope and still fail': function(test) {
       var promise;
       test.expect(6);
-      promise = new Promise(__bind(function(foo, bar, baz, success, fail) {
+      promise = new Promise(__bind(function(foo, bar, baz, keepCallback, breakCallback) {
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');
-        return fail(foo, bar, baz);
+        return breakCallback(foo, bar, baz);
       }, this));
       promise.kept(function() {
         return test.fail('Should not succeed');

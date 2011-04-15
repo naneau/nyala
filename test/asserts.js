@@ -10,7 +10,7 @@
       var promise;
       test.expect(1);
       promise = new Promise(function(foo, bar, baz) {
-        return this.success(foo, bar, baz);
+        return this.keep(foo, bar, baz);
       });
       promise.assert = function(foo, bar, baz) {
         return foo === 'foo';
@@ -28,7 +28,7 @@
       var promise;
       test.expect(0);
       promise = new Promise(function(foo, bar, baz) {
-        return this.success(foo, bar, baz);
+        return this.keep(foo, bar, baz);
       });
       promise.assert = function(foo, bar, baz) {
         return foo === 'quux';

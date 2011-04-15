@@ -13,7 +13,7 @@
         return "" + foo + ":" + bar + ":" + baz;
       };
       promise = new Promise(function(foo, bar, baz) {
-        return this.success(foo, bar, baz);
+        return this.keep(foo, bar, baz);
       });
       promise.filter = filter;
       promise.kept(function(result) {
@@ -29,7 +29,7 @@
         return [baz, bar, foo];
       };
       promise = new Promise(function(foo, bar, baz) {
-        return this.success(foo, bar, baz);
+        return this.keep(foo, bar, baz);
       });
       promise.filter = filter;
       promise.kept(function(baz, bar, foo) {

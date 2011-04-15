@@ -32,9 +32,9 @@ module.exports = testCase
     'Promises can record success': (test) ->
         test.expect 0
         
-        # @success is asynchronous
+        # @keep is asynchronous
         promise = new Promise () -> 
-            fn = () => do @success
+            fn = () => do @keep
             process.nextTick fn
             
         promise.broken () -> test.fail 'Should not fail'
@@ -45,9 +45,9 @@ module.exports = testCase
     'Promises can record failure': (test) ->
         test.expect 0
 
-        # @success is asynchronous
+        # @keep is asynchronous
         promise = new Promise () -> 
-            fn = () => do @fail
+            fn = () => do @break
             process.nextTick fn
             
         promise.kept () -> test.fail 'Should not succeed'
@@ -58,9 +58,9 @@ module.exports = testCase
     'Promises can record success and pass results': (test) ->
         test.expect 3
 
-        # @success is asynchronous
+        # @keep is asynchronous
         promise = new Promise () -> 
-            fn = () => @success 'foo', 'bar', 'baz'
+            fn = () => @keep 'foo', 'bar', 'baz'
             process.nextTick fn
             
         promise.broken () -> test.fail 'Should not fail'
@@ -76,9 +76,9 @@ module.exports = testCase
     'Promises can record failure and pass results': (test) ->
         test.expect 3
 
-        # @success is asynchronous
+        # @keep is asynchronous
         promise = new Promise () -> 
-            fn = () => @fail 'foo', 'bar', 'baz'
+            fn = () => @break 'foo', 'bar', 'baz'
             process.nextTick fn
             
         promise.kept () -> test.fail 'Should not succeed'
@@ -92,14 +92,19 @@ module.exports = testCase
         do promise.execute
         
     'Promises can execute with a different scope and still succeed': (test) ->
-        test.expect 6
-    
-        promise = new Promise (foo, bar, baz, success, fail) => 
+        test.expect 7
+        
+        scope = foo: 'foo'
+        
+        promise = new Promise scope, (foo, bar, baz, keepCallback, breakCallback) -> 
+            # this.foo should be available
+            test.equal @foo, 'foo'
+            
             test.equal foo, 'foo'
             test.equal bar, 'bar'
             test.equal baz, 'baz'
             
-            success foo, bar, baz
+            keepCallback foo, bar, baz
             
         promise.broken () -> test.fail 'Should not fail'
         promise.kept (foo, bar, baz) ->
@@ -115,12 +120,12 @@ module.exports = testCase
     'Promises can execute with a different scope and still fail': (test) ->
         test.expect 6
 
-        promise = new Promise (foo, bar, baz, success, fail) => 
+        promise = new Promise (foo, bar, baz, keepCallback, breakCallback) => 
             test.equal foo, 'foo'
             test.equal bar, 'bar'
             test.equal baz, 'baz'
 
-            fail foo, bar, baz
+            breakCallback foo, bar, baz
             
         promise.kept () -> test.fail 'Should not succeed'
         promise.broken (foo, bar, baz) ->

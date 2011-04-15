@@ -13,15 +13,15 @@
       chain = new PromiseChain;
       chain.add(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       });
       chain.add(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       });
       chain.add(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       });
       chain.broken(function() {
         return test.fail('We should not fail');
@@ -38,15 +38,15 @@
       chain = new PromiseChain;
       chain.add(function() {
         test.ok(true);
-        return this.success('foo');
+        return this.keep('foo');
       });
       chain.add(function(foo) {
         test.equal(foo, 'foo');
-        return this.success('bar');
+        return this.keep('bar');
       });
       chain.add(function(bar) {
         test.equal(bar, 'bar');
-        return this.success('baz');
+        return this.keep('baz');
       });
       chain.broken(function() {
         return test.fail('We should not fail');
@@ -63,11 +63,11 @@
       chain = new PromiseChain;
       chain.add(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       });
       chain.add(function() {
         test.ok(true);
-        return this.fail('foo');
+        return this["break"]('foo');
       });
       chain.add(function() {
         return test.fail('We should not get to the third step in the chain');
@@ -87,15 +87,15 @@
       chain = new PromiseChain;
       chain.add(new Promise(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       }));
       chain.add(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       });
       chain.add(new Promise(function() {
         test.ok(true);
-        return this.success();
+        return this.keep();
       }));
       chain.broken(function() {
         return test.fail('We should not fail');

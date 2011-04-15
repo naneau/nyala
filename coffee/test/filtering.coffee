@@ -17,7 +17,7 @@ module.exports = testCase
         # Filters 3 strings into 1, note that this is tricky because array gets turned into single item (!!!)
         filter = (foo, bar, baz) -> "#{foo}:#{bar}:#{baz}"
         
-        promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
+        promise = new Promise (foo, bar, baz) -> @keep foo, bar, baz
         promise.filter = filter
         
         promise.kept (result) -> 
@@ -33,7 +33,7 @@ module.exports = testCase
         # Filters 3 strings into 1, note that this is tricky because array gets turned into single item (!!!)
         filter = (foo, bar, baz) -> [baz, bar, foo]
 
-        promise = new Promise (foo, bar, baz) -> @success foo, bar, baz
+        promise = new Promise (foo, bar, baz) -> @keep foo, bar, baz
         promise.filter = filter
 
         promise.kept (baz, bar, foo) -> 

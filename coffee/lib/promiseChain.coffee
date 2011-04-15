@@ -23,10 +23,12 @@ class PromiseChain extends Promise
         this
         
     # Add a promise to the chain, chainable
-    add: (promise) ->
-        
+    add: (args...) ->
         # Turn functions into promises
-        promise = new Promise promise if typeof promise is 'function'
+        if typeof args[args.length - 1] is 'function'
+            promise = new Promise args... 
+        else 
+            promise = args[0]
             
         @promises.push promise
         
@@ -41,8 +43,8 @@ class PromiseChain extends Promise
             
         # Recursively called "next", promise doesn't have to be aware it's in a chain
         next = (index, args...) =>
-            # Sanity check, if we reached the end of the array, we can assume success
-            return @success args... if not stack[index]?
+            # Sanity check, if we reached the end of the array, we can assume all promises have been kept
+            return @keep args... if not stack[index]?
             
             # Promise we're about to execute
             promise = stack[index]
@@ -52,17 +54,17 @@ class PromiseChain extends Promise
             promise.broken (args...) =>
                 # We keep a boolean here in case somebody calls both fail and success
                 failed = true
-                @fail args...
+                @break args...
             
             # Success on the other hand, will continue the chain with the next promise
             promise.kept (args...) -> 
                 next (index + 1), args... if not failed
                 
             # Assert each promise with @assertEach if it is set
-            return @fail "Assertion failed on step #{index + 1}" if @assertEach? and not @assertEach args... 
+            return @break "Assertion failed on step #{index + 1}" if @assertEach? and not @assertEach args... 
             
             # Execute it
-            promise.execute.apply promise, args
+            promise.execute args...
         
         # Let's start at the beginning, shall we? :)
         next 0, args...
