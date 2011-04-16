@@ -15,6 +15,14 @@
       });
       return promise.execute();
     },
+    'Promises throw an exception if they do not get passed a function to execute': function(test) {
+      test.expect(1);
+      test.throws(function() {
+        var promise;
+        return promise = new Promise;
+      });
+      return test.done();
+    },
     'Promises get parameters passed to the function': function(test) {
       var promise;
       test.expect(3);
@@ -110,13 +118,14 @@
       scope = {
         foo: 'foo'
       };
-      promise = new Promise(scope, function(foo, bar, baz, keepCallback, breakCallback) {
+      promise = new Promise(function(foo, bar, baz, keepCallback, breakCallback) {
         test.equal(this.foo, 'foo');
         test.equal(foo, 'foo');
         test.equal(bar, 'bar');
         test.equal(baz, 'baz');
         return keepCallback(foo, bar, baz);
       });
+      promise.scope = scope;
       promise.broken(function() {
         return test.fail('Should not fail');
       });

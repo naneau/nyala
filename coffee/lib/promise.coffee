@@ -9,11 +9,14 @@ class Promise
 
     # Constructor
     constructor: (args...) ->
-        # Last argument passed is the function to execute
-        @func = do args.pop
+        # Throw error
+        throw new Error "No function passed to Promise" if args.length is 0
         
-        # But we may have a first denoting the scope for the function
-        @scope = if args.length > 0 then do args.pop else this
+        # Second argument passed is the scope to bind the function to, but this is optional
+        @scope = if args.length >= 2 then args[1] else this
+        
+        # Last argument passed is the function to execute
+        @func = args[0]
         
         # Handlers
         @brokenHandlers = []

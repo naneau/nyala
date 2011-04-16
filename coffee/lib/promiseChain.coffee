@@ -11,8 +11,7 @@ class PromiseChain extends Promise
     constructor: (args...) ->
         
         # We're just a regular Promise too, @runStack gets called when executing
-        p = this
-        super this, (args...) -> p.runStack args...
+        super (args...) => @runStack args...
             
         # Init array of promises
         @promises = []
@@ -25,8 +24,9 @@ class PromiseChain extends Promise
         
     # Add a promise to the chain, chainable
     add: (args...) ->
+        
         # Turn functions into promises
-        if typeof args[args.length - 1] is 'function'
+        if typeof args[0] is 'function'
             promise = new Promise args... 
         else 
             promise = args[0]
