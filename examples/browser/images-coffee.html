@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
+    <script type="text/javascript" src="https://github.com/naneau/nyala/raw/master/browser/nyala.js"></script>
+    <script type="text/javascript" src="http://jashkenas.github.com/coffee-script/extras/coffee-script.js"></script>
+    
+    <script type="text/coffeescript">
+    
+        # Create a PromiseBurst for a set of images
+        preLoadImages = (images) ->
+            # We'll be loading the images in a burst
+            burst = new PromiseBurst
+        
+            # Add a promise to the burst for every image
+            for image in images
+                do (image) ->
+                    burst.add (keepCallback) ->
+                        img = $ '<img />'
+                        img.attr 'src', image.media.m
+                        img.bind 'load', -> keepCallback this
+                        
+            burst
+
+        # Get the latest flickr pictures
+        getFlickrImages = -> 
+            new Promise (keepCallback, breakCallback) ->
+                $.getJSON 'http://www.flickr.com/services/feeds/photos_public.gne?format=json&jsoncallback=?', (images) -> keepCallback images.items
+        
+        $(document).ready () ->
+            # get a promise for the latest flickr images
+            flickrPromise = getFlickrImages()
+
+            # Once we get those images, pre-load them in a burst
+            flickrPromise.kept (images) ->
+                # Preload the images
+                preloadPromise = preLoadImages images
+
+                # Once *all* images have loaded, insert them into the dom all at once
+                preloadPromise.kept -> 
+                    console.log preloadPromise.aggregatedResults
+                    $('body').append result[0] for result in preloadPromise.aggregatedResults
+
+                # Start preloading
+                preloadPromise.execute()
+
+            # Execute the promise
+            flickrPromise.execute()
+            
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

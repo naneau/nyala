@@ -18,7 +18,7 @@
             addPromise = function (image) {
                 burst.add(function(keepCallback) {
                     $('<img />')
-                        .attr('src', images.media.m)
+                        .attr('src', image.media.m)
                         .bind('load', function() {
                             // "this" is bound to the img element in the jQuery callback
                             keepCallback(this);

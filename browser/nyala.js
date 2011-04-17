@@ -180,9 +180,9 @@
         _results.push(__bind(function(promise) {
           if (!this.promiseIsSetUp(promise)) {
             promise.kept(__bind(function() {
-              var keptArgs, _ref;
+              var keptArgs;
               keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-              (_ref = this.aggregatedResults).push.apply(_ref, keptArgs);
+              this.aggregatedResults.push(keptArgs);
               return keepOne(promise);
             }, this));
             promise.broken(__bind(function() {
