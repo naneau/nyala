@@ -13,6 +13,7 @@ class PromiseChain extends Promise
             
         # Init array of promises
         @promises = []
+        @setUpPromises = []
         
         # Add all passed promises
         @add promise for promise in args
@@ -48,19 +49,14 @@ class PromiseChain extends Promise
             promise = stack[index]
             
             # Set up listeners if the promise does not know it's in this chain yet
-            if not promise.isInChain this
-                promise.putInChain this
+            if (checkPromise for checkPromise in @setUpPromises when checkPromise is promise).length is 0
+                @setUpPromises.push promise
                 
                 # We listen to the fail, which will break the chain
-                failed = false
-                promise.broken (brokenArgs...) =>
-                    # We keep a boolean here in case somebody calls both fail and success
-                    failed = true
-                    @break brokenArgs...
+                promise.broken (brokenArgs...) => @break brokenArgs...
             
                 # Success on the other hand, will continue the chain with the next promise
-                promise.kept (keptArgs...) -> 
-                    next (index + 1), keptArgs... if not failed
+                promise.kept (keptArgs...) -> next (index + 1), keptArgs...
             
             # Assert each promise with @assertEach if it is set
             return @break "Assertion failed on step #{index + 1}" if @assertEach? and not @assertEach args... 

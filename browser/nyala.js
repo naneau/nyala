@@ -26,7 +26,6 @@
       this.func = args[0];
       this.brokenHandlers = [];
       this.keptHandlers = [];
-      this.inChains = [];
       void 0;
     }
     Promise.prototype.kept = function(handler) {
@@ -81,24 +80,6 @@
       }
       return _results;
     };
-    Promise.prototype.putInChain = function(chain) {
-      return this.inChains.push(chain);
-    };
-    Promise.prototype.isInChain = function(checkChain) {
-      var chain;
-      return ((function() {
-        var _i, _len, _ref, _results;
-        _ref = this.inChains;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          chain = _ref[_i];
-          if (chain === checkChain) {
-            _results.push(chain);
-          }
-        }
-        return _results;
-      }).call(this)).length > 0;
-    };
     return Promise;
   })();
   moduleExport('Promise', Promise);
@@ -117,6 +98,7 @@
         return this.runStack.apply(this, args);
       }, this));
       this.promises = [];
+      this.setUpPromises = [];
       for (_i = 0, _len = args.length; _i < _len; _i++) {
         promise = args[_i];
         this.add(promise);
@@ -146,27 +128,34 @@
         return;
       }
       next = __bind(function() {
-        var failed, index, promise;
+        var checkPromise, index, promise;
         index = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (!(stack[index] != null)) {
           return this.keep.apply(this, args);
         }
         promise = stack[index];
-        if (!promise.isInChain(this)) {
-          promise.putInChain(this);
-          failed = false;
+        if (((function() {
+          var _i, _len, _ref, _results;
+          _ref = this.setUpPromises;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            checkPromise = _ref[_i];
+            if (checkPromise === promise) {
+              _results.push(checkPromise);
+            }
+          }
+          return _results;
+        }).call(this)).length === 0) {
+          this.setUpPromises.push(promise);
           promise.broken(__bind(function() {
             var brokenArgs;
             brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-            failed = true;
             return this["break"].apply(this, brokenArgs);
           }, this));
           promise.kept(function() {
             var keptArgs;
             keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-            if (!failed) {
-              return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
-            }
+            return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
           });
         }
         if ((this.assertEach != null) && !this.assertEach.apply(this, args)) {
