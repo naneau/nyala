@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Preloading images in a burst</title>
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
+    <script type="text/javascript" src="https://github.com/naneau/nyala/raw/master/browser/nyala.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Get the latest flickr pictures
+            var flickrPromise = new Promise(function(keepCallback, breakCallback) {
+                $.getJSON('http://www.flickr.com/services/feeds/photos_public.gne?format=json&jsoncallback=?', function(images) {
+                    keepCallback(images.items);
+                });
+            });
+            
+            // Once we get those images, pre-load them in a burst
+            flickrPromise.kept(function(images) {
+                var burst = new PromiseBurst;
+                
+                // Elements to load
+                imageElements = []
+                
+                // Add a preloader for an image
+                addLoader = function(image) {
+                    burst.add(function(keepCallback) {
+                        var imageElement = $('<img />');
+                        
+                        imageElement.attr('src', image.media.m);
+                        
+                        imageElement.bind('load', function() {
+                            imageElements.push(imageElement);
+                            keepCallback();
+                        });
+                    });
+                };
+                
+                // Add a promise to the burst for every image
+                for (key in images) {
+                    addLoader(images[key]);
+                }
+                
+                // Once *all* images have loaded, insert them into the dom all at once
+                burst.kept(function() {
+                    for( key in imageElements) {
+                        imageElement = imageElements[key];
+                        $('body').append(imageElement);
+                    }
+                });
+                
+                burst.execute();
+            });
+            
+            // Execute the promise
+            flickrPromise.execute();
+            
+        });
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
