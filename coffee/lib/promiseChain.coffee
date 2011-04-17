@@ -48,7 +48,7 @@ class PromiseChain extends Promise
             # Promise we're about to execute
             promise = stack[index]
             
-            # Set up listeners if the promise does not know it's in this chain yet
+            # Set up listeners if we haven't already
             if (checkPromise for checkPromise in @setUpPromises when checkPromise is promise).length is 0
                 @setUpPromises.push promise
                 
