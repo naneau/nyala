@@ -11,10 +11,9 @@
         $(document).ready(function() {
             
             // Get latest coffeescript tweets
-            var promise = new Promise(function() {
-                var parent = this;
+            var promise = new Promise(function(keepCallback, breakCallback) {
                 $.getJSON('http://search.twitter.com/search.json?q=coffeescript&rpp=20&callback=?', function(tweets) {
-                    parent.keep(tweets.results);
+                    keepCallback(tweets.results);
                 });
             });
             
@@ -26,7 +25,7 @@
                 }
             });
             
-            // 
+            // Execute the promise
             promise.execute();
         });
     </script>
