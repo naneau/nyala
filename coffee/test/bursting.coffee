@@ -51,7 +51,8 @@ module.exports = testCase
         
         p3 = new Promise () -> 
             test.ok true
-            @keep 'baz'
+            fn = () => @keep 'baz'
+            process.nextTick fn
         p3.kept (baz) -> test.equal baz, 'baz'
         
         chain.add p1
