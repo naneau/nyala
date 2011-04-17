@@ -149,16 +149,16 @@
     }
     __extends(PromiseBurst, PromiseBunch);
     PromiseBurst.prototype.runStack = function() {
-      var args, keepOne, kept, promise, _i, _len, _ref, _results;
-      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      var args, breakCallback, keepCallback, keepOne, kept, promise, _i, _j, _len, _ref, _results;
+      args = 3 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 2) : (_i = 0, []), keepCallback = arguments[_i++], breakCallback = arguments[_i++];
       kept = [];
       keepOne = __bind(function(promise) {
-        var promise;
+        var checkPromise;
         if (((function() {
           var _i, _len, _results;
           _results = [];
           for (_i = 0, _len = kept.length; _i < _len; _i++) {
-            promise = kept[_i];
+            checkPromise = kept[_i];
             if (checkPromise === promise) {
               _results.push(checkPromise);
             }
@@ -169,27 +169,29 @@
         }
         kept.push(promise);
         if (kept.length === this.promises.length) {
-          return this.success();
+          return this.keep();
         }
       }, this);
       _ref = this.promises;
       _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        promise = _ref[_i];
-        if (!this.promiseIsSetUp(promise)) {
-          promise.kept(function() {
-            var keptArgs;
-            keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-            return keepOne(promise);
-          });
-          promise.broken(__bind(function() {
-            var brokenArgs;
-            brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-            return this["break"].apply(this, brokenArgs);
-          }, this));
-          this.addSetUpPromise(promise);
-        }
-        _results.push(promise.execute.apply(promise, args));
+      for (_j = 0, _len = _ref.length; _j < _len; _j++) {
+        promise = _ref[_j];
+        _results.push(__bind(function(promise) {
+          if (!this.promiseIsSetUp(promise)) {
+            promise.kept(function() {
+              var keptArgs;
+              keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+              return keepOne(promise);
+            });
+            promise.broken(__bind(function() {
+              var brokenArgs;
+              brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+              return this["break"].apply(this, brokenArgs);
+            }, this));
+            this.addSetUpPromise(promise);
+          }
+          return promise.execute.apply(promise, args);
+        }, this)(promise));
       }
       return _results;
     };
