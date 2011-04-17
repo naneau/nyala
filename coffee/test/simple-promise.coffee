@@ -3,7 +3,7 @@
 # Nodeunit's test case
 testCase = (require 'nodeunit').testCase
 
-Promise = require '../lib/promise'
+{Promise} = require '../lib'
 
 # Test case promise
 module.exports = testCase 

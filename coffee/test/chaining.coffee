@@ -3,8 +3,10 @@
 # Nodeunit's test case
 testCase = (require 'nodeunit').testCase
 
-Promise = require '../lib/promise'
-PromiseChain = require '../lib/promiseChain'
+# Nyala
+Nyala = require '../lib'
+Promise = Nyala.Promise
+PromiseChain = Nyala.PromiseChain
 
 module.exports = testCase 
 

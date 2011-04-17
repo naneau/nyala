@@ -1,5 +1,3 @@
-Promise = require './promise'
-
 # PromiseChain
 #        
 # Promise chain has a set of promises that it will execute in order they are set
@@ -70,4 +68,4 @@ class PromiseChain extends Promise
         # Let's start at the beginning, shall we? :)
         next 0, args...
 
-module.exports = PromiseChain
+moduleExport 'PromiseChain', PromiseChain

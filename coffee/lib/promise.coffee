@@ -62,4 +62,4 @@ class Promise
         handler args... for handler in @keptHandlers
 
 # Export
-module.exports = Promise
+moduleExport 'Promise', Promise

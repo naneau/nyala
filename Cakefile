@@ -1,11 +1,22 @@
 exec = (require 'child_process').exec
+fs = require 'fs'
 
+# Build Nyala
 build = (callback) ->
-
-    # Quick 'n dirty build
-    exec "coffee -o . -c coffee", (err, stdout, stderr) ->
+    
+    # See, this is one of those places where you could really use a promise chain =]
+    
+    # Build lib
+    exec 'coffee -o ./lib -j -c `find ./coffee/lib -name \*.coffee`', (err, stdout, stderr) ->
         throw new Error "Could not execute #{cmd}" if err?
-        do callback
+        
+        fs.renameSync 'lib/concatenation.js', 'lib/index.js'
+        
+        # Build test cases
+        exec "coffee -o ./test -c coffee/test", (err, stdout, stderr) ->
+    
+            throw new Error "Could not execute #{cmd}" if err?
+            do callback
 
 # Build coffeescript into js
 task 'build', 'Build CoffeeScript lib/test into JS lib/test', ->

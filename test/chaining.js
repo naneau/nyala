@@ -1,9 +1,10 @@
 (function() {
-  var Promise, PromiseChain, testCase;
+  var Nyala, Promise, PromiseChain, testCase;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   testCase = (require('nodeunit')).testCase;
-  Promise = require('../lib/promise');
-  PromiseChain = require('../lib/promiseChain');
+  Nyala = require('../lib');
+  Promise = Nyala.Promise;
+  PromiseChain = Nyala.PromiseChain;
   module.exports = testCase({
     setUp: function(callback) {
       return callback();

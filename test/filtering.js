@@ -1,7 +1,7 @@
 (function() {
   var Promise, testCase;
   testCase = (require('nodeunit')).testCase;
-  Promise = require('../lib/promise');
+  Promise = require('../lib').Promise;
   module.exports = testCase({
     setUp: function(callback) {
       return callback();

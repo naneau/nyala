@@ -2,7 +2,7 @@
   var Promise, testCase;
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   testCase = (require('nodeunit')).testCase;
-  Promise = require('../lib/promise');
+  Promise = require('../lib').Promise;
   module.exports = testCase({
     setUp: function(callback) {
       return callback();
