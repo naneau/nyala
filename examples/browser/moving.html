@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>A Moving Block</title>
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
+        <script type="text/javascript" src="https://github.com/naneau/nyala/raw/master/browser/nyala.js"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Spacing to keep
+            spacing = 10;
+            
+            // Our little block
+            block = $('#block');
+            container = $('#wrap');
+            
+            // A simple move function
+            move = function (top, left, callback) {
+                // Set text
+                block.html('moving to' + '<br />' + (top ? 'top' : 'bottom') + '<br /> ' + (left ? 'left' : 'right'));
+                
+                // Animate
+                block.animate({
+                    top: top ? spacing : container.innerHeight() - block.width() - spacing,
+                    left: left ? spacing : container.innerWidth() - block.width() - spacing
+                }, {
+                    duration: 1000,
+                    easing: 'swing',
+                    complete: callback
+                });
+            };
+            
+            // A chain of promises, each gets executed after the next
+            chain = new PromiseChain;
+            
+            // Move the block around
+            chain.add(function(keepCallback) { 
+                move(true, false, keepCallback);
+            });
+            chain.add(function(keepCallback) { 
+                move(false, false, keepCallback);
+            });
+            chain.add(function(keepCallback) { 
+                move(false, true, keepCallback);
+            });
+            chain.add(function(keepCallback) { 
+                move(true, true, keepCallback);
+            });
+
+            // Loop :)
+            chain.kept(function() {
+                block.stop(true);
+                setTimeout(function() {
+                    chain.execute();
+                }, 100);
+            });
+            
+            chain.execute();
+        });
+    </script>
+    <style type="text/css">
+        #wrap {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius:3px;            
+        }
+        #block {
+            position:absolute;
+            width:100px;
+            height:80px;
+            top: 10px;
+            left: 10px;
+            background-color:#bada55;
+            border-radius:3px;
+            color: #fff;
+            font-family: Arial;
+            text-align: center;
+            padding: 20px 0 0 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div id="block"></div>
+    </div>
+</body>
+</html>
