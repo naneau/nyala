@@ -1,5 +1,6 @@
 (function() {
   var Nyala, Promise, PromiseChain, testCase;
+  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
   testCase = (require('nodeunit')).testCase;
   Nyala = require('../lib');
   Promise = Nyala.Promise;
@@ -52,8 +53,12 @@
         return test.equal(bar, 'bar');
       });
       p3 = new Promise(function() {
+        var fn;
         test.ok(true);
-        return this.keep('baz');
+        fn = __bind(function() {
+          return this.keep('baz');
+        }, this);
+        return process.nextTick(fn);
       });
       p3.kept(function(baz) {
         return test.equal(baz, 'baz');
