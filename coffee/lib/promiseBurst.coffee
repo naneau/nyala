@@ -5,6 +5,9 @@ class PromiseBurst extends PromiseBunch
     
     # Run our stack
     runStack: (args..., keepCallback, breakCallback) ->
+        # Stack for the results
+        @aggregatedResults = []
+        
         # Array of promises we've kept so far
         kept = []
         keepOne = (promise) =>
@@ -18,7 +21,13 @@ class PromiseBurst extends PromiseBunch
         for promise in @promises
             do (promise) =>
                 if not @promiseIsSetUp promise
-                    promise.kept (keptArgs...) -> keepOne promise
+                    # Promise has been kept
+                    promise.kept (keptArgs...) =>
+                        # Push results to the stack
+                        @aggregatedResults.push keptArgs
+                        keepOne promise
+                    
+                    # Promise was broken, we can fail our bust right here and now
                     promise.broken (brokenArgs...) => @break brokenArgs...
                 
                     @addSetUpPromise promise
