@@ -22,13 +22,12 @@ class PromiseChain extends Promise
         
     # Add a promise to the chain, chainable
     add: (args...) ->
-        
         # Turn functions into promises
         if typeof args[0] is 'function'
             promise = new Promise args... 
         else 
             promise = args[0]
-            
+        
         @promises.push promise
         
         this
@@ -48,17 +47,21 @@ class PromiseChain extends Promise
             # Promise we're about to execute
             promise = stack[index]
             
-            # We listen to the fail, which will break the chain
-            failed = false
-            promise.broken (brokenArgs...) =>
-                # We keep a boolean here in case somebody calls both fail and success
-                failed = true
-                @break brokenArgs...
-            
-            # Success on the other hand, will continue the chain with the next promise
-            promise.kept (keptArgs...) -> 
-                next (index + 1), keptArgs... if not failed
+            # Set up listeners if the promise does not know it's in this chain yet
+            if not promise.isInChain this
+                promise.putInChain this
                 
+                # We listen to the fail, which will break the chain
+                failed = false
+                promise.broken (brokenArgs...) =>
+                    # We keep a boolean here in case somebody calls both fail and success
+                    failed = true
+                    @break brokenArgs...
+            
+                # Success on the other hand, will continue the chain with the next promise
+                promise.kept (keptArgs...) -> 
+                    next (index + 1), keptArgs... if not failed
+            
             # Assert each promise with @assertEach if it is set
             return @break "Assertion failed on step #{index + 1}" if @assertEach? and not @assertEach args... 
             

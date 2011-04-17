@@ -26,6 +26,7 @@
       this.func = args[0];
       this.brokenHandlers = [];
       this.keptHandlers = [];
+      this.inChains = [];
       void 0;
     }
     Promise.prototype.kept = function(handler) {
@@ -80,6 +81,24 @@
       }
       return _results;
     };
+    Promise.prototype.putInChain = function(chain) {
+      return this.inChains.push(chain);
+    };
+    Promise.prototype.isInChain = function(checkChain) {
+      var chain;
+      return ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.inChains;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          chain = _ref[_i];
+          if (chain === checkChain) {
+            _results.push(chain);
+          }
+        }
+        return _results;
+      }).call(this)).length > 0;
+    };
     return Promise;
   })();
   moduleExport('Promise', Promise);
@@ -133,20 +152,23 @@
           return this.keep.apply(this, args);
         }
         promise = stack[index];
-        failed = false;
-        promise.broken(__bind(function() {
-          var brokenArgs;
-          brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-          failed = true;
-          return this["break"].apply(this, brokenArgs);
-        }, this));
-        promise.kept(function() {
-          var keptArgs;
-          keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-          if (!failed) {
-            return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
-          }
-        });
+        if (!promise.isInChain(this)) {
+          promise.putInChain(this);
+          failed = false;
+          promise.broken(__bind(function() {
+            var brokenArgs;
+            brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+            failed = true;
+            return this["break"].apply(this, brokenArgs);
+          }, this));
+          promise.kept(function() {
+            var keptArgs;
+            keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+            if (!failed) {
+              return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
+            }
+          });
+        }
         if ((this.assertEach != null) && !this.assertEach.apply(this, args)) {
           return this["break"]("Assertion failed on step " + (index + 1));
         }

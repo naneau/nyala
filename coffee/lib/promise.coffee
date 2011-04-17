@@ -22,6 +22,9 @@ class Promise
         @brokenHandlers = []
         @keptHandlers = []
         
+        # Keep track of which chains we're in
+        @inChains = []
+        
         undefined
     
     # Add a handler to the broken 
@@ -60,6 +63,11 @@ class Promise
 
         # Promise is mainly a wrapper around event
         handler args... for handler in @keptHandlers
-
+        
+    # Record we're in a chain, to avoid double callbacks
+    putInChain: (chain) -> @inChains.push chain
+    
+    # Check if we're in a chain
+    isInChain: (checkChain) -> (chain for chain in @inChains when chain is checkChain).length > 0
 # Export
 moduleExport 'Promise', Promise
