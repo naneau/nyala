@@ -1,5 +1,5 @@
 (function() {
-  var Promise, PromiseBurst, PromiseChain, moduleExport;
+  var Promise, PromiseBunch, PromiseBurst, PromiseChain, moduleExport;
   var __slice = Array.prototype.slice, __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -83,19 +83,18 @@
     return Promise;
   })();
   moduleExport('Promise', Promise);
-  PromiseBurst = (function() {
-    function PromiseBurst() {}
-    return PromiseBurst;
-  })();
-  moduleExport('PromiseBurst', PromiseBurst);
-  PromiseChain = (function() {
-    __extends(PromiseChain, Promise);
-    function PromiseChain() {
+  PromiseBunch = (function() {
+    __extends(PromiseBunch, Promise);
+    function PromiseBunch() {
       var args, promise, _i, _len;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      PromiseChain.__super__.constructor.call(this, __bind(function() {
-        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        return this.runStack.apply(this, args);
+      PromiseBunch.__super__.constructor.call(this, __bind(function() {
+        var executeArgs;
+        executeArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        if (this.promises.length === 0) {
+          return this.keep();
+        }
+        return this.runStack.apply(this, executeArgs);
       }, this));
       this.promises = [];
       this.setUpPromises = [];
@@ -103,9 +102,9 @@
         promise = args[_i];
         this.add(promise);
       }
-      this;
+      void 0;
     }
-    PromiseChain.prototype.add = function() {
+    PromiseBunch.prototype.add = function() {
       var args, promise;
       args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (typeof args[0] === 'function') {
@@ -120,33 +119,99 @@
       this.promises.push(promise);
       return this;
     };
-    PromiseChain.prototype.runStack = function() {
-      var args, breakCallback, keepCallback, next, stack, _i;
-      args = 3 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 2) : (_i = 0, []), keepCallback = arguments[_i++], breakCallback = arguments[_i++];
-      stack = this.promises;
-      if (stack.length === 0) {
-        return;
-      }
-      next = __bind(function() {
-        var checkPromise, index, promise;
-        index = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        if (!(stack[index] != null)) {
-          return this.keep.apply(this, args);
+    PromiseBunch.prototype.promiseIsSetUp = function(promise) {
+      var checkPromise;
+      return ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.setUpPromises;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          checkPromise = _ref[_i];
+          if (checkPromise === promise) {
+            _results.push(checkPromise);
+          }
         }
-        promise = stack[index];
+        return _results;
+      }).call(this)).length > 0;
+    };
+    PromiseBunch.prototype.addSetUpPromise = function(promise) {
+      return this.setUpPromises.push(promise);
+    };
+    PromiseBunch.prototype.runStack = function() {
+      var args, breakCallback, keepCallback, _i;
+      args = 3 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 2) : (_i = 0, []), keepCallback = arguments[_i++], breakCallback = arguments[_i++];
+    };
+    return PromiseBunch;
+  })();
+  PromiseBurst = (function() {
+    function PromiseBurst() {
+      PromiseBurst.__super__.constructor.apply(this, arguments);
+    }
+    __extends(PromiseBurst, PromiseBunch);
+    PromiseBurst.prototype.runStack = function() {
+      var args, keepOne, kept, promise, _i, _len, _ref, _results;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      kept = [];
+      keepOne = __bind(function(promise) {
+        var promise;
         if (((function() {
-          var _i, _len, _ref, _results;
-          _ref = this.setUpPromises;
+          var _i, _len, _results;
           _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            checkPromise = _ref[_i];
+          for (_i = 0, _len = kept.length; _i < _len; _i++) {
+            promise = kept[_i];
             if (checkPromise === promise) {
               _results.push(checkPromise);
             }
           }
           return _results;
-        }).call(this)).length === 0) {
-          this.setUpPromises.push(promise);
+        })()).length > 0) {
+          throw new Error("A promise was kept more than once");
+        }
+        kept.push(promise);
+        if (kept.length === this.promises.length) {
+          return this.success();
+        }
+      }, this);
+      _ref = this.promises;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        promise = _ref[_i];
+        if (!this.promiseIsSetUp(promise)) {
+          promise.kept(function() {
+            var keptArgs;
+            keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+            return keepOne(promise);
+          });
+          promise.broken(__bind(function() {
+            var brokenArgs;
+            brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+            return this["break"].apply(this, brokenArgs);
+          }, this));
+          this.addSetUpPromise(promise);
+        }
+        _results.push(promise.execute.apply(promise, args));
+      }
+      return _results;
+    };
+    return PromiseBurst;
+  })();
+  moduleExport('PromiseBurst', PromiseBurst);
+  PromiseChain = (function() {
+    function PromiseChain() {
+      PromiseChain.__super__.constructor.apply(this, arguments);
+    }
+    __extends(PromiseChain, PromiseBunch);
+    PromiseChain.prototype.runStack = function() {
+      var args, breakCallback, keepCallback, next, _i;
+      args = 3 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 2) : (_i = 0, []), keepCallback = arguments[_i++], breakCallback = arguments[_i++];
+      next = __bind(function() {
+        var index, promise;
+        index = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+        if (!(this.promises[index] != null)) {
+          return this.keep.apply(this, args);
+        }
+        promise = this.promises[index];
+        if (!this.promiseIsSetUp(promise)) {
           promise.broken(__bind(function() {
             var brokenArgs;
             brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -157,6 +222,7 @@
             keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
             return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
           });
+          this.addSetUpPromise(promise);
         }
         if ((this.assertEach != null) && !this.assertEach.apply(this, args)) {
           return this["break"]("Assertion failed on step " + (index + 1));
