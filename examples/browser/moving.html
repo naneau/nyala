@@ -5,7 +5,7 @@
     <title>A Moving Block</title>
     
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
-        <script type="text/javascript" src="https://github.com/naneau/nyala/raw/master/browser/nyala.js"></script>
+    <script type="text/javascript" src="https://github.com/naneau/nyala/raw/master/browser/nyala.js"></script>
     
     <script type="text/javascript">
         $(document).ready(function() {
@@ -38,14 +38,11 @@
             // Move the block around
             chain.add(function(keepCallback) { 
                 move(true, false, keepCallback);
-            });
-            chain.add(function(keepCallback) { 
+            }).add(function(keepCallback) { 
                 move(false, false, keepCallback);
-            });
-            chain.add(function(keepCallback) { 
+            }).add(function(keepCallback) { 
                 move(false, true, keepCallback);
-            });
-            chain.add(function(keepCallback) { 
+            }).add(function(keepCallback) { 
                 move(true, true, keepCallback);
             });
 
