@@ -12,11 +12,18 @@ build = (callback) ->
         
         fs.renameSync 'lib/concatenation.js', 'lib/index.js'
         
-        # Build test cases
-        exec "coffee -o ./test -c coffee/test", (err, stdout, stderr) ->
-    
+        # Create browser files, one minified version
+        fs.writeFileSync 'browser/nyala.js', fs.readFileSync 'lib/index.js'
+        
+        exec 'uglifyjs -o browser/nyala-min.js browser/nyala.js', (err, stdout, stderr) ->
+            
             throw new Error "Could not execute #{cmd}" if err?
-            do callback
+        
+            # Build test cases
+            exec "coffee -o ./test -c coffee/test", (err, stdout, stderr) ->
+    
+                throw new Error "Could not execute #{cmd}" if err?
+                do callback
 
 # Build coffeescript into js
 task 'build', 'Build CoffeeScript lib/test into JS lib/test', ->
