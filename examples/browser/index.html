@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>Nyala Browser Demo</title>
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.js"></script>
+    <script type="text/javascript" src="https://github.com/naneau/nyala/raw/master/browser/nyala.js"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function() {
+            
+            // Get latest coffeescript tweets
+            var promise = new Promise(function() {
+                var parent = this;
+                $.getJSON('http://search.twitter.com/search.json?q=coffeescript&rpp=20&callback=?', function(tweets) {
+                    parent.keep(tweets.results);
+                });
+            });
+            
+            // If the promise is kept, insert into dom
+            promise.kept(function(tweets) {
+                for (key in tweets) {
+                    var tweet = tweets[key];
+                    $('#tweets').append($('<li><strong>' + tweet.from_user +'</strong>: ' + tweet.text + '</li>'));
+                }
+            });
+            
+            // 
+            promise.execute();
+        });
+    </script>
+    
+</head>
+<body>
+    <h1>Nyala Browser Demo</h1>
+    <p>This example shows you how to move asynchronous calls into a promise structure. It should be pretty self explanatory</p>
+    <h2>Latest #CoffeeScript tweets</h2>
+    <ul id="tweets"></ul>
+</body>
+</html>
