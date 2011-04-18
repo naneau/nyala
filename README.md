@@ -33,7 +33,7 @@ could become
     
     promise.execute();
 
-While this may seem more tedious, at first, there are several benefits to this approach. For instance, Promises can be passed around in your application, and, if applicable, be reused. It is also possible to assign more than one `kept` handler. Promises make dealing with asynchrony a lot more painless.
+While this may seem more tedious, at first, there are several benefits to this approach. For instance, Promises can be passed around in your application, and, if applicable, be reused. It is also possible to assign more than one `kept` handler.
 
 ## Promise Chaining
 
