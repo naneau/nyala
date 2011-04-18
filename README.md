@@ -2,28 +2,38 @@
 
 Nyala is a promise library for javascript. It was partially inspired by [an article](http://blog.fogus.me/2011/04/12/node-js-is-dead-long-live-node/) by Michael Fogus. It is written in [CoffeeScript](http://coffeescript.org), and targets both the browser and [node.js](http://nodejs.org). For more information, see [the manual](http://naneau.net/nyala), or look at [some examples](https://github.com/naneau/nyala/tree/master/examples).
 
+Although written in CoffeeScript, Nyala explicitly targets both JavaScript and CoffeeScript environments, this readme uses JavaScript, but [the manual](http://naneau.net/nyala) also offers CoffeeScript.
+
 ## Promises
 
-Promises are a way to deal with asynchrony in your code. JavaScript, by nature, lends itself very well to writing asynchronously structured applications. Promises help you manage deal with them. Instead of writing
+Promises are a way to deal with asynchrony in your code. JavaScript, by nature, lends itself very well to writing asynchronously structured applications. Promises help you manage them. Instead of passing callbacks to all functions that will perform an asynchronous action, you retrieve a Promise from them and work with that, making it easier to break your application up into manageable chunks. The following example
 
-    someFunc('foo', 'bar', function(err, data) {
-        if (!err) {
+    someFunc('foo', 'bar', function(error, data) {
+        if (!error) {
             someOtherFunc(data);
         } else {
-            notifyUserOfFailure();
+            notifyUserOfFailure(error);
         }
     });
     
-you could write
+could become
 
-    promise = someFunc('foo', 'bar');
+    promise = new Promise(function(keepCallback, breakCallback) {
+        someFunc('foo', 'bar', function(error, data) {
+            if (error) {
+                breakCallback(error);
+            } else {
+                keepCallback(data);
+            }
+        });
+    });
     
     promise.kept(someOtherFunc);
     promise.broken(notifyUserOfFailure);
     
     promise.execute();
-    
-Promises can be passed around your application. More than one `kept` handler can be assigned, etc. In short, promises make dealing with asynchrony a lot more painless.
+
+While this may seem more tedious, at first, there are several benefits to this approach. For instance, Promises can be passed around in your application, and, if applicable, be reused. More than one `kept` handler can be assigned. Promises make dealing with asynchrony a lot more painless.
 
 ## Promise Chaining
 
