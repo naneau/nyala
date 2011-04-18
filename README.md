@@ -33,11 +33,11 @@ When doing asynchronous things in series, you'll end up indenting for every link
         foo.bar(function(bar){
             bar.baz(function(quux) {
                 doSomethingUsefulWith(quux);
-            })
+            });
         });
     });
 
-With more than a couple of steps in your chain this becomes unmanageable. Nyala offers you a PromiseChain class, which executes all promises serially:
+With more than a couple of steps in your chain this quickly becomes messy and unmanageable. Nyala offers you a PromiseChain class, which executes all promises serially. The previous example could become:
 
     chain = new PromiseChain;
     
@@ -80,6 +80,7 @@ You could chain the calls, but that would not be very efficient. Keeping track o
 
     burst.kept(function() {
         // All three have been executed
+        // you can use burst.eachResult(function(){}); to get at the results
     });
     
     burst.execute();
