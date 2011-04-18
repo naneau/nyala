@@ -1,6 +1,6 @@
 # Nyala
 
-Nyala is a promise library for javascript. It was partially inspired by [an article](http://blog.fogus.me/2011/04/12/node-js-is-dead-long-live-node/) by Michael Fogus. It is written in [CoffeeScript](http://coffeescript.org), and targets both the browser and [node.js](http://nodejs.org). For more information, see [the manual](http://naneau.net/nyala).
+Nyala is a promise library for javascript. It was partially inspired by [an article](http://blog.fogus.me/2011/04/12/node-js-is-dead-long-live-node/) by Michael Fogus. It is written in [CoffeeScript](http://coffeescript.org), and targets both the browser and [node.js](http://nodejs.org). For more information, see [the manual](http://naneau.net/nyala), or look at [some examples](https://github.com/naneau/nyala/tree/master/examples).
 
 ## Promises
 
