@@ -6,8 +6,12 @@ Nyala is a promise library for javascript. It was partially inspired by [an arti
 
 Promises are a way to deal with asynchrony in your code. JavaScript, by nature, lends itself very well to writing asynchronously structured applications. Promises help you manage deal with them. Instead of writing
 
-    someFunc('foo', 'bar', function() {
-        someOtherFunc();
+    someFunc('foo', 'bar', function(err, data) {
+        if (!err) {
+            someOtherFunc(data);
+        } else {
+            notifyUserOfFailure();
+        }
     });
     
 you could write
@@ -15,7 +19,7 @@ you could write
     promsise = someFunc('foo', 'bar');
     
     promise.kept(someOtherFunc);
-    promise.broken(notifyUserOfFailure());
+    promise.broken(notifyUserOfFailure);
     
     promise.execute();
     
