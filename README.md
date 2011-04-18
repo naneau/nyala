@@ -16,7 +16,7 @@ Promises are a way to deal with asynchrony in your code. JavaScript, by nature, 
     
 you could write
 
-    promsise = someFunc('foo', 'bar');
+    promise = someFunc('foo', 'bar');
     
     promise.kept(someOtherFunc);
     promise.broken(notifyUserOfFailure);
