@@ -144,10 +144,26 @@
     return PromiseBunch;
   })();
   PromiseBurst = (function() {
-    function PromiseBurst() {
-      PromiseBurst.__super__.constructor.apply(this, arguments);
-    }
     __extends(PromiseBurst, PromiseBunch);
+    function PromiseBurst() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      PromiseBurst.__super__.constructor.apply(this, args);
+      this.aggregatedResults = [];
+    }
+    PromiseBurst.prototype.eachResult = function(fn, scope) {
+      var results, _i, _len, _ref, _results;
+      if (scope == null) {
+        scope = null;
+      }
+      _ref = this.aggregatedResults;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        results = _ref[_i];
+        _results.push(fn.apply(scope, results));
+      }
+      return _results;
+    };
     PromiseBurst.prototype.runStack = function() {
       var args, breakCallback, keepCallback, keepOne, kept, promise, _i, _j, _len, _ref, _results;
       args = 3 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 2) : (_i = 0, []), keepCallback = arguments[_i++], breakCallback = arguments[_i++];

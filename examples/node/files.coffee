@@ -34,14 +34,16 @@ for file in files
                 if error
                     @break error
                 else
-                    @keep data
+                    @keep file, data
                 
         
 # All files have been written, read them again
 writeBurst.kept () -> do readBurst.execute
 
 # Get the results of the file reading
-readBurst.kept (results) -> console.log results
+readBurst.kept () -> 
+    # Loop over every result
+    readBurst.eachResult (fileName, contents) -> process.stdout.write " * file #{file} contains: #{contents} \n\n"
 
 # Start the whole chain
 do writeBurst.execute

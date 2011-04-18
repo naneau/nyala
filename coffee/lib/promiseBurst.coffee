@@ -3,6 +3,16 @@
 # When bursting, all promises get executed in paralel
 class PromiseBurst extends PromiseBunch
     
+    # Constructor
+    constructor: (args...) ->
+        super args...
+        
+        # Stack for the results
+        @aggregatedResults = []
+        
+    # Loop over each result
+    eachResult: (fn, scope = null) -> fn.apply scope, results for results in @aggregatedResults
+    
     # Run our stack
     runStack: (args..., keepCallback, breakCallback) ->
         # Stack for the results
