@@ -170,7 +170,7 @@
         }
         kept.push(promise);
         if (kept.length === this.promises.length) {
-          return this.keep();
+          return this.keep(this.aggregatedResults);
         }
       }, this);
       _ref = this.promises;

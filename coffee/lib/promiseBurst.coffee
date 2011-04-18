@@ -15,7 +15,7 @@ class PromiseBurst extends PromiseBunch
             throw new Error "A promise was kept more than once" if (checkPromise for checkPromise in kept when checkPromise is promise).length > 0
             
             kept.push promise
-            do @keep if kept.length is @promises.length
+            @keep @aggregatedResults if kept.length is @promises.length
         
         # Take every promise and execute it right away
         for promise in @promises
