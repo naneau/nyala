@@ -1,0 +1,25 @@
+{
+  "name": "nyala",
+  "description": "A Light And Nimble Promise Library For Node And The Browser",
+  "version": "0.0.1",
+  "homepage": "http://naneau.net/nyala",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/naneau/nyala.git"
+  },
+  "author": "Maurice Fonk <nyala@naneau.nl> (http://naneau.net/)",
+  "directories" : {
+      "lib" : "./lib"
+    },
+  "main" : "./lib/index",
+  "scripts": {
+    "test": "cake test"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.0.1"
+  },
+  
+}
