@@ -119,6 +119,27 @@
       this.promises.push(promise);
       return this;
     };
+    PromiseBunch.prototype.addDeferred = function() {
+      var args, deferred;
+      deferred = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      this.promises.push(new Promise(function() {
+        var bunchArgs, deferredPromise;
+        bunchArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        deferredPromise = deferred.apply(null, __slice.call(args).concat(__slice.call(bunchArgs)));
+        deferredPromise.kept(__bind(function() {
+          var keptArgs;
+          keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+          return this.keep.apply(this, keptArgs);
+        }, this));
+        deferredPromise.broken(__bind(function() {
+          var brokenArgs;
+          brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+          return this["break"].apply(this, brokenArgs);
+        }, this));
+        return deferredPromise.execute.apply(deferredPromise, bunchArgs);
+      }));
+      return this;
+    };
     PromiseBunch.prototype.promiseIsSetUp = function(promise) {
       var checkPromise;
       return ((function() {
