@@ -37,6 +37,17 @@ class PromiseBunch extends Promise
         
         this
     
+    # Add a deferred promise
+    addDeferred: (deferred, args...) ->
+        @promises.push new Promise (bunchArgs...) ->
+            deferredPromise = deferred args..., bunchArgs...
+            
+            deferredPromise.kept (keptArgs...) => @keep keptArgs...
+            deferredPromise.broken (brokenArgs...) => @break brokenArgs...
+            do deferredPromise.execute bunchArgs...
+            
+        chain
+        
     # Is a promise set up?
     promiseIsSetUp: (promise) -> (checkPromise for checkPromise in @setUpPromises when checkPromise is promise).length > 0
     
