@@ -13,6 +13,25 @@ class PromiseBurst extends PromiseBunch
     # Loop over each result
     eachResult: (fn, scope = null) -> fn.apply scope, results for results in @aggregatedResults
     
+    # Create array of values using fn, fn can only return a singular value
+    mapResults: (fn, scope = null) ->
+        mapped = []
+        mapped.push fn.apply scope, results for results in @aggregatedResults
+        mapped
+        
+    # Get all results that `fn results` to true
+    detectResults: (fn, scope = null) ->
+        detected = []
+        for results in @aggregatedResults
+            if fn.apply scope, results 
+                detected.push results 
+        detected
+    
+    # Reduce results using +=, rather useful for strings and integers
+    addResults: (start) ->
+        start += result for result in @aggregatedResults
+        start
+        
     # Run our stack
     runStack: (args..., keepCallback, breakCallback) ->
         # Stack for the results
