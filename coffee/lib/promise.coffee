@@ -48,7 +48,10 @@ class Promise
         @func.apply @scope, args
         
     # Record failure
-    break: (args...) -> handler args... for handler in @brokenHandlers
+    break: (args...) -> 
+        handler args... for handler in @brokenHandlers
+        
+        this
 
     # Record success
     keep: (args...) ->
@@ -60,6 +63,15 @@ class Promise
 
         # Promise is mainly a wrapper around event
         handler args... for handler in @keptHandlers
+        
+        this
+        
+    # Depend on another promise
+    dependOn: (promise) ->
+        promise.kept (results...) => @keep results...
+        promise.broken (errors...) => @break errors...
+        
+        this
 
 # Export
 moduleExport 'Promise', Promise
