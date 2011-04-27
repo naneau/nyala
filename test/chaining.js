@@ -134,6 +134,36 @@
         return test.done();
       });
       return chain.execute();
+    },
+    'A PromiseChain can be tapped': function(test) {
+      var chain;
+      test.expect(3);
+      chain = new PromiseChain;
+      chain.tap(function(foo) {
+        return test.equal(foo, 'foo');
+      });
+      chain.add(function() {
+        return process.nextTick(__bind(function() {
+          return this.keep('foo');
+        }, this));
+      });
+      chain.add(function() {
+        return process.nextTick(__bind(function() {
+          return this.keep('foo');
+        }, this));
+      });
+      chain.add(function() {
+        return process.nextTick(__bind(function() {
+          return this.keep('foo');
+        }, this));
+      });
+      chain.broken(function() {
+        return test.fail('We should not fail');
+      });
+      chain.kept(function(foo) {
+        return test.done();
+      });
+      return chain.execute();
     }
   });
 }).call(this);

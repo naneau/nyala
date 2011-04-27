@@ -310,14 +310,14 @@
             brokenArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
             return this["break"].apply(this, brokenArgs);
           }, this));
-          promise.kept(function() {
+          promise.kept(__bind(function() {
             var keptArgs;
             keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
             if (this.tapFunction != null) {
               this.tapFunction.apply(this, keptArgs);
             }
             return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
-          });
+          }, this));
           this.addSetUpPromise(promise);
         }
         if ((this.assertEach != null) && !this.assertEach.apply(this, args)) {

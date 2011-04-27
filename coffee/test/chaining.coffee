@@ -126,3 +126,19 @@ module.exports = testCase
             do test.done
     
         do chain.execute
+
+    'A PromiseChain can be tapped': (test) ->
+        test.expect 3
+
+        chain = new PromiseChain
+        
+        chain.tap (foo) -> test.equal foo, 'foo'
+        
+        chain.add -> process.nextTick () => @keep 'foo'
+        chain.add -> process.nextTick () => @keep 'foo'
+        chain.add -> process.nextTick () => @keep 'foo'
+        
+        chain.broken () -> test.fail 'We should not fail'        
+        chain.kept (foo) -> do test.done
+
+        do chain.execute
