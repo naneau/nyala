@@ -1,7 +1,7 @@
 {
   "name": "nyala",
   "description": "A Light And Nimble Promise Library For Node And The Browser",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "http://naneau.net/nyala",
   "repository": {
     "type": "git",
