@@ -9,16 +9,16 @@ build = (callback) ->
     # Build lib
     cmd = 'coffee -o ./lib -j -c `find ./coffee/lib -name \\*.coffee`'
     exec cmd, (err, stdout, stderr) ->
-        throw new Error "Could not execute #{cmd}" if err?
+        throw new Error "Could not execute #{cmd}: #{stderr}" if err?
         
         fs.renameSync 'lib/concatenation.js', 'lib/index.js'
         
         # Create browser files, one minified version
         fs.writeFileSync 'browser/nyala.js', fs.readFileSync 'lib/index.js'
         
-        exec 'uglifyjs -o browser/nyala-min.js browser/nyala.js', (err, stdout, stderr) ->
-            
-            throw new Error "Could not execute #{cmd}" if err?
+        uglifyCmd = 'uglifyjs -o browser/nyala-min.js browser/nyala.js'
+        exec uglifyCmd, (err, stdout, stderr) ->
+            throw new Error "Could not execute #{uglifyCmd}: #{stderr}" if err?
         
             # Build test cases
             exec "coffee -o ./test -c coffee/test", (err, stdout, stderr) ->

@@ -24,7 +24,11 @@ class PromiseChain extends PromiseBunch
                 promise.broken (brokenArgs...) => @break brokenArgs...
             
                 # Success on the other hand, will continue the chain with the next promise
-                promise.kept (keptArgs...) -> next (index + 1), keptArgs...
+                promise.kept (keptArgs...) -> 
+                    # # @tap is called if provided
+                    # @tap keptArgs... if @tap?
+                    
+                    next (index + 1), keptArgs...
                 
                 # Track that we have set this one up
                 @addSetUpPromise promise
