@@ -290,6 +290,10 @@
       PromiseChain.__super__.constructor.apply(this, arguments);
     }
     __extends(PromiseChain, PromiseBunch);
+    PromiseChain.prototype.tap = function(tapFunction) {
+      this.tapFunction = tapFunction;
+      return this;
+    };
     PromiseChain.prototype.runStack = function() {
       var args, breakCallback, keepCallback, next, _i;
       args = 3 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 2) : (_i = 0, []), keepCallback = arguments[_i++], breakCallback = arguments[_i++];
@@ -309,6 +313,9 @@
           promise.kept(function() {
             var keptArgs;
             keptArgs = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+            if (this.tapFunction != null) {
+              this.tapFunction.apply(this, keptArgs);
+            }
             return next.apply(null, [index + 1].concat(__slice.call(keptArgs)));
           });
           this.addSetUpPromise(promise);

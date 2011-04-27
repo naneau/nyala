@@ -5,6 +5,9 @@
 # You can use @assertEach as an assert on all promises
 class PromiseChain extends PromiseBunch
     
+    # Tap into the chain
+    tap: (@tapFunction) -> this
+    
     # Run through our stack of promises and execute each one, sequentially
     runStack: (args..., keepCallback, breakCallback) ->
         
@@ -25,8 +28,8 @@ class PromiseChain extends PromiseBunch
             
                 # Success on the other hand, will continue the chain with the next promise
                 promise.kept (keptArgs...) -> 
-                    # # @tap is called if provided
-                    # @tap keptArgs... if @tap?
+                    # @tap is called if provided
+                    @tapFunction keptArgs... if @tapFunction?
                     
                     next (index + 1), keptArgs...
                 
