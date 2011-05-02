@@ -10,6 +10,9 @@ class PromiseBurst extends PromiseBunch
         # Stack for the results
         @aggregatedResults = []
         
+    # Unwrapped results
+    unWrapResults: () -> (result[0] for result in @aggregatedResults)
+
     # Loop over each result
     eachResult: (fn, scope = null) -> fn.apply scope, results for results in @aggregatedResults
     
