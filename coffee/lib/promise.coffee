@@ -59,7 +59,7 @@ class Promise
         # I think it may be better if I add a simple Filter class that mirrors Promise functionality, or at least add
         # a callback here
         args = @filter args... if @filter
-        args = [args] if not Array.isArray args
+        args = [].concat args
 
         # Promise is mainly a wrapper around event
         handler args... for handler in @keptHandlers
