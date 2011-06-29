@@ -1,7 +1,7 @@
 {
   "name": "nyala",
   "description": "A Light And Nimble Promise Library For Node And The Browser",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "homepage": "http://naneau.net/nyala",
   "repository": {
     "type": "git",
@@ -19,6 +19,7 @@
     "node": "*"
   },
   "devDependencies": {
-    "coffee-script": ">=1.1.0"
+    "coffee-script": ">=1.1.0",
+    "uglify-js": "*"
   }
 }
